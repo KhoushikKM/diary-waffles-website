@@ -1,0 +1,137 @@
+<header
+  class="site-header"
+  [class.nav-hidden]="!navVisible()"
+  [attr.aria-hidden]="!navVisible()"
+  [attr.inert]="navVisible() ? null : ''"
+>
+  <nav class="topbar" aria-label="Main navigation">
+    <div class="nav-group nav-group-left">
+      <a class="nav-link" href="#home">Home</a>
+      <a class="nav-link" href="#about">About us</a>
+      <a class="nav-link" href="#combos">Combos</a>
+    </div>
+    <a class="nav-brand" routerLink="/" aria-label="Dairy Waffles home">
+      <img src="/pics/logo.png" alt="" width="36" height="36" />
+    </a>
+    <div class="nav-group nav-group-right">
+      <a class="nav-link" href="#favorites">Favourites</a>
+      <a class="nav-link" routerLink="/menu">Menu</a>
+      <a class="nav-link" href="#feedback">Feedbacks</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <section class="hero" id="home" aria-labelledby="hero-title">
+    <div class="hero-content">
+      <img
+        class="hero-logo"
+        src="/pics/waflesbranding.png"
+        alt="Dairy Waffles"
+        width="760"
+        height="230"
+      />
+      <h1 id="hero-title">
+        <span class="display-word">Mooo-d</span> for something sweet?
+        <span class="display-word">Mooo-re</span> than just waffles
+      </h1>
+      <p>Good days start with golden waffles and a whole lot of love.</p>
+      <a class="hero-cta" href="#about">Get to know us <span aria-hidden="true">↓</span></a>
+    </div>
+    <a class="scroll-cue" href="#about" aria-label="Scroll to About us">
+      <span></span>
+    </a>
+  </section>
+
+  <section class="about section-shell" id="about" aria-labelledby="about-title">
+    <div class="about-copy">
+      <p class="eyebrow">A little about us</p>
+      <h2 id="about-title">Made with care.<br /><span class="display-word">Served</span> with a smile.</h2>
+      <p class="about-description">
+        We source fresh milk from villages around Courtallam, working alongside
+        the local farmers whose dedication makes every batch possible. We believe
+        great dairy begins with strong relationships and respect for the people
+        behind every ingredient.
+      </p>
+      <p class="about-description">
+        From that milk, we craft delightful dairy products and waffle treats with
+        care. Our goal is simple: give customers something delicious to enjoy
+        while helping local farmers and their families thrive.
+      </p>
+      <a class="text-link" routerLink="/menu">Find your new favorite <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="about-note" aria-label="Freshly made, always with love">
+      <span class="note-sparkle" aria-hidden="true">✳</span>
+      <span>Freshly made</span>
+      <strong>always with<br />a little love</strong>
+      <span class="note-sparkle" aria-hidden="true">✳</span>
+    </div>
+  </section>
+
+  <section class="combos-feature" id="combos" aria-labelledby="combos-title">
+    <div class="combos-copy">
+      <p class="eyebrow">A new way to waffle</p>
+      <h2 id="combos-title">Introducing<br /><span class="display-word">combos</span>...!</h2>
+      <ol class="combo-steps">
+        <li><span>1.</span>Choose your waffle.</li>
+        <li><span>2.</span>Pick the toppings of your choice.</li>
+        <li><span>3.</span>Select your favorite drink.</li>
+      </ol>
+      <p class="combo-finale">And enjoy your combo!</p>
+      <a class="section-cta" routerLink="/combos">Try combos <span aria-hidden="true">→</span></a>
+    </div>
+  </section>
+
+  <section class="favorites section-shell" id="favorites" aria-labelledby="favorites-title">
+    <p class="eyebrow">Loved at first bite</p>
+    <h2 id="favorites-title">Our customer favourites<br />and top sellers</h2>
+    <img
+      class="favorites-art"
+      src="/pics/favs.png"
+      alt="Our top-selling waffles: matcha, triple chocolate, lotus crunch, and pearl white meridian"
+      width="1774"
+      height="910"
+    />
+    <a class="section-cta" routerLink="/menu">Try more <span aria-hidden="true">→</span></a>
+  </section>
+
+  <section class="feedback section-shell" id="feedback" aria-labelledby="feedback-title">
+    <p class="eyebrow">Kind words from our table</p>
+    <h2 id="feedback-title">The sweetest part is sharing.</h2>
+    <div class="review-window">
+      <div class="review-track">
+        <div class="review-group">
+          @for (review of reviews; track review.name) {
+            <article class="review-card">
+              <p class="stars" [attr.aria-label]="review.rating + ' out of 5 stars'">
+                @for (star of [1, 2, 3, 4, 5]; track star) {
+                  <span [class.dim-star]="star > review.rating" aria-hidden="true">★</span>
+                }
+              </p>
+              <blockquote>“{{ review.quote }}”</blockquote>
+              <p class="review-name">{{ review.name }}</p>
+            </article>
+          }
+        </div>
+        <div class="review-group" aria-hidden="true">
+          @for (review of reviews; track review.name) {
+            <article class="review-card">
+              <p class="stars">
+                @for (star of [1, 2, 3, 4, 5]; track star) {
+                  <span [class.dim-star]="star > review.rating">★</span>
+                }
+              </p>
+              <blockquote>“{{ review.quote }}”</blockquote>
+              <p class="review-name">{{ review.name }}</p>
+            </article>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <img src="/pics/waflesbranding.png" alt="" width="180" height="55" />
+  <p>Made fresh, shared often. <span aria-hidden="true">♥</span></p>
+</footer>

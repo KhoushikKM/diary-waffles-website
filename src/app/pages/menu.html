@@ -1,0 +1,252 @@
+<header
+  class="menu-header"
+  [class.nav-hidden]="!navVisible()"
+  [attr.aria-hidden]="!navVisible()"
+  [attr.inert]="navVisible() ? null : ''"
+>
+  <nav class="menu-topbar" aria-label="Menu navigation">
+    <div class="menu-nav-group menu-nav-group-left">
+      <a class="menu-nav-link" href="#waffles">Waffles</a>
+      <a class="menu-nav-link" href="#sprinklers">Sprinklers</a>
+    </div>
+    <a class="menu-nav-brand" routerLink="/" aria-label="Dairy Waffles home">
+      <img src="/pics/logo.png" alt="" width="36" height="36" />
+    </a>
+    <div class="menu-nav-group menu-nav-group-right">
+      <a class="menu-nav-link" href="#drinks">Drinks</a>
+      <a class="menu-nav-link" routerLink="/combos">Combos</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <section class="menu-hero" aria-labelledby="menu-hero-title">
+    <div class="menu-hero-copy">
+      <p class="menu-hero-intro">Get ready to treat your tastebuds with</p>
+      <h1 id="menu-hero-title">
+        <span class="menu-title-accent">Amoooou-sing</span><br />
+        <span class="menu-title-light">flavours</span>
+      </h1>
+    </div>
+  </section>
+
+  <section
+    class="flavour-showcase"
+    id="waffles"
+    aria-label="Waffle flavours"
+    [style.--flavour-background]="flavours[activeFlavourIndex()].color"
+    [style.--flavour-text]="flavours[activeFlavourIndex()].textColor"
+    [style.--flavour-accent]="flavours[activeFlavourIndex()].accentColor"
+  >
+    <aside class="waffle-stage" aria-hidden="true">
+      @for (flavour of flavours; track flavour.slug; let flavourIndex = $index) {
+        <div
+          class="waffle-layer"
+          [attr.data-product-index]="flavourIndex"
+          [style.--waffle-color]="flavour.color"
+        >
+          @if (flavour.frames.length > 0) {
+            @for (frame of flavour.frames; track $index; let frameIndex = $index) {
+              <img
+                class="waffle-frame product-frame"
+                [src]="frame"
+                alt=""
+                [attr.loading]="flavourIndex < 2 ? 'eager' : 'lazy'"
+                [attr.fetchpriority]="flavourIndex === 0 && frameIndex === 0 ? 'high' : 'auto'"
+                decoding="async"
+              />
+            }
+          } @else {
+            <div class="waffle-placeholder">
+              <span class="waffle-placeholder-label">Waffle images will be added here</span>
+            </div>
+          }
+        </div>
+      }
+    </aside>
+
+    <div class="flavour-panels">
+      @for (flavour of flavours; track flavour.slug; let flavourIndex = $index) {
+        <section
+          class="flavour-panel"
+          [attr.data-product-index]="flavourIndex"
+          [attr.aria-labelledby]="'flavour-' + flavour.slug"
+          [style.--flavour-background]="flavour.color"
+          [style.--flavour-text]="flavour.textColor"
+          [style.--flavour-accent]="flavour.accentColor"
+        >
+          <div class="flavour-content">
+            <p class="flavour-count">Flavour {{ flavourIndex + 1 }} / {{ flavours.length }}</p>
+            <h2 [id]="'flavour-' + flavour.slug">{{ flavour.name }}</h2>
+
+            <div class="flavour-tabs" role="group" aria-label="Flavour details">
+              <button
+                type="button"
+                [class.is-active]="(productTabs()[flavour.slug] ?? 'description') === 'description'"
+                [attr.aria-pressed]="(productTabs()[flavour.slug] ?? 'description') === 'description'"
+                (click)="setProductTab(flavour.slug, 'description')"
+              >
+                Description
+              </button>
+              <button
+                type="button"
+                [class.is-active]="productTabs()[flavour.slug] === 'nutrition'"
+                [attr.aria-pressed]="productTabs()[flavour.slug] === 'nutrition'"
+                (click)="setProductTab(flavour.slug, 'nutrition')"
+              >
+                Nutrition
+              </button>
+            </div>
+
+            <div class="flavour-price" role="group" aria-label="Special price">
+              <span class="previous-price">₹{{ flavour.previousPrice }}</span>
+              <strong>₹{{ flavour.price }}</strong>
+            </div>
+
+            <p
+              class="flavour-description detail-view"
+              [class.is-active]="(productTabs()[flavour.slug] ?? 'description') === 'description'"
+              [attr.aria-hidden]="(productTabs()[flavour.slug] ?? 'description') !== 'description'"
+            >
+              {{ flavour.description }}
+            </p>
+            <section
+              class="nutrition-card detail-view"
+              [class.is-active]="productTabs()[flavour.slug] === 'nutrition'"
+              [attr.aria-hidden]="productTabs()[flavour.slug] !== 'nutrition'"
+              [attr.aria-labelledby]="'nutrition-' + flavour.slug"
+            >
+              <h3 [id]="'nutrition-' + flavour.slug">Nutrition information</h3>
+              <p class="nutrition-note">Illustrative estimates only; not lab-verified. Actual values may vary.</p>
+              <dl class="nutrition-table">
+                @for (fact of flavour.nutrition; track fact.label) {
+                  <div class="nutrition-row">
+                    <dt>{{ fact.label }}</dt>
+                    <dd>{{ fact.value }}</dd>
+                  </div>
+                }
+              </dl>
+            </section>
+
+            <button
+              class="add-to-cart"
+              type="button"
+              disabled
+              [attr.aria-label]="'Add ' + flavour.name + ' to cart (coming soon)'"
+            >
+              <span>Add to cart</span>
+              <span class="cart-coming-soon">Coming soon</span>
+            </button>
+          </div>
+        </section>
+      }
+    </div>
+  </section>
+
+  <section
+    class="flavour-showcase drink-showcase"
+    id="drinks"
+    aria-label="Drinks"
+    [style.--flavour-background]="drinks[activeDrinkIndex()].color"
+    [style.--flavour-text]="drinks[activeDrinkIndex()].textColor"
+    [style.--flavour-accent]="drinks[activeDrinkIndex()].accentColor"
+  >
+    <div class="flavour-panels drink-panels">
+      @for (drink of drinks; track drink.slug; let drinkIndex = $index) {
+        <section
+          class="drink-panel"
+          [attr.data-product-index]="drinkIndex"
+          [attr.aria-labelledby]="'drink-' + drink.slug"
+          [style.--flavour-background]="drink.color"
+          [style.--flavour-text]="drink.textColor"
+          [style.--flavour-accent]="drink.accentColor"
+        >
+          <div class="flavour-content">
+            <p class="flavour-count">Drink {{ drinkIndex + 1 }} / {{ drinks.length }}</p>
+            <h2 [id]="'drink-' + drink.slug">{{ drink.name }}</h2>
+
+            <div class="flavour-tabs" role="group" aria-label="Drink details">
+              <button
+                type="button"
+                [class.is-active]="(productTabs()[drink.slug] ?? 'description') === 'description'"
+                [attr.aria-pressed]="(productTabs()[drink.slug] ?? 'description') === 'description'"
+                (click)="setProductTab(drink.slug, 'description')"
+              >
+                Description
+              </button>
+              <button
+                type="button"
+                [class.is-active]="productTabs()[drink.slug] === 'nutrition'"
+                [attr.aria-pressed]="productTabs()[drink.slug] === 'nutrition'"
+                (click)="setProductTab(drink.slug, 'nutrition')"
+              >
+                Nutrition
+              </button>
+            </div>
+
+            <div class="flavour-price" role="group" aria-label="Special price">
+              <span class="previous-price">₹{{ drink.previousPrice }}</span>
+              <strong>₹{{ drink.price }}</strong>
+            </div>
+
+            <p
+              class="flavour-description detail-view"
+              [class.is-active]="(productTabs()[drink.slug] ?? 'description') === 'description'"
+              [attr.aria-hidden]="(productTabs()[drink.slug] ?? 'description') !== 'description'"
+            >
+              {{ drink.description }}
+            </p>
+            <section
+              class="nutrition-card detail-view"
+              [class.is-active]="productTabs()[drink.slug] === 'nutrition'"
+              [attr.aria-hidden]="productTabs()[drink.slug] !== 'nutrition'"
+              [attr.aria-labelledby]="'nutrition-' + drink.slug"
+            >
+              <h3 [id]="'nutrition-' + drink.slug">Nutrition information</h3>
+              <p class="nutrition-note">
+                Illustrative estimates only; not lab-verified. Actual values may vary.
+              </p>
+              <dl class="nutrition-table">
+                @for (fact of drink.nutrition; track fact.label) {
+                  <div class="nutrition-row">
+                    <dt>{{ fact.label }}</dt>
+                    <dd>{{ fact.value }}</dd>
+                  </div>
+                }
+              </dl>
+            </section>
+
+            <button
+              class="add-to-cart"
+              type="button"
+              disabled
+              [attr.aria-label]="'Add ' + drink.name + ' to cart (coming soon)'"
+            >
+              <span>Add to cart</span>
+              <span class="cart-coming-soon">Coming soon</span>
+            </button>
+          </div>
+        </section>
+      }
+    </div>
+
+    <aside class="waffle-stage drink-stage" aria-hidden="true">
+      @for (drink of drinks; track drink.slug; let drinkIndex = $index) {
+        <div
+          class="waffle-layer drink-layer"
+          [attr.data-product-index]="drinkIndex"
+          [style.--waffle-color]="drink.color"
+        >
+          <img
+            class="waffle-frame drink-frame product-frame"
+            [src]="'/pics/drinks/' + drink.image"
+            alt=""
+            [attr.loading]="drinkIndex < 2 ? 'eager' : 'lazy'"
+            [attr.fetchpriority]="drinkIndex === 0 ? 'high' : 'auto'"
+            decoding="async"
+          />
+        </div>
+      }
+    </aside>
+  </section>
+</main>

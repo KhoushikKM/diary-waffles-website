@@ -1,0 +1,133 @@
+<main class="combos-page">
+  <section class="combo-builder" aria-labelledby="combos-title">
+    <p class="eyebrow">Your sweet-and-sippable pairing</p>
+    <h1 id="combos-title">Build your combo</h1>
+    <p class="combo-intro">Pick one waffle and one drink. Your pairing is just ₹309.</p>
+
+    <div class="combo-choices">
+      <button
+        id="combo-choice-waffle"
+        class="combo-choice-card"
+        type="button"
+        aria-haspopup="dialog"
+        [attr.aria-expanded]="activePicker() === 'waffle'"
+        (click)="openPicker('waffle')"
+      >
+        <span class="choice-label">Choose a waffle</span>
+        @if (selectedWaffle(); as waffle) {
+          <span class="selected-choice">
+            <img [src]="'/pics/waffle/' + waffle.image" [alt]="waffle.name" />
+            <span>{{ waffle.name }}</span>
+          </span>
+        } @else {
+          <span class="choice-placeholder">
+            <span class="choice-plus" aria-hidden="true">+</span>
+            <span>Select your waffle</span>
+          </span>
+        }
+      </button>
+
+      <button
+        id="combo-choice-drink"
+        class="combo-choice-card"
+        type="button"
+        aria-haspopup="dialog"
+        [attr.aria-expanded]="activePicker() === 'drink'"
+        (click)="openPicker('drink')"
+      >
+        <span class="choice-label">Choose a drink</span>
+        @if (selectedDrink(); as drink) {
+          <span class="selected-choice">
+            <img [src]="'/pics/drinks/' + drink.image" [alt]="drink.name" />
+            <span>{{ drink.name }}</span>
+          </span>
+        } @else {
+          <span class="choice-placeholder">
+            <span class="choice-plus" aria-hidden="true">+</span>
+            <span>Select your drink</span>
+          </span>
+        }
+      </button>
+    </div>
+
+    <div class="combo-price" aria-label="Combo price 309 rupees, reduced from 398 rupees">
+      <span class="combo-old-price">₹398</span>
+      <strong>₹309</strong>
+      <span class="combo-price-note">for both</span>
+    </div>
+
+    <button
+      class="place-order"
+      type="button"
+      [disabled]="!selectedWaffle() || !selectedDrink()"
+      (click)="placeOrder()"
+    >
+      Place order
+    </button>
+  </section>
+
+  @if (activePicker(); as picker) {
+    <div class="combo-picker-backdrop" role="presentation" (click)="closePicker()">
+      <section
+        class="combo-picker"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="combo-picker-title"
+        tabindex="-1"
+        (click)="$event.stopPropagation()"
+      >
+        <header class="combo-picker-header">
+          <div>
+            <p class="eyebrow">Make it yours</p>
+            <h2 id="combo-picker-title">
+              {{ picker === 'waffle' ? 'Choose your waffle' : 'Choose your drink' }}
+            </h2>
+          </div>
+          <button
+            class="close-picker"
+            type="button"
+            aria-label="Close picker"
+            autofocus
+            (click)="closePicker()"
+          >
+            Close
+          </button>
+        </header>
+
+        <div class="combo-option-list">
+          @if (picker === 'waffle') {
+            @for (waffle of waffles; track waffle.slug) {
+              <button
+                class="combo-option"
+                type="button"
+                [attr.aria-pressed]="selectedWaffle()?.slug === waffle.slug"
+                (click)="selectWaffle(waffle)"
+              >
+                <img [src]="'/pics/waffle/' + waffle.image" [alt]="waffle.name" />
+                <span>{{ waffle.name }}</span>
+                <span class="option-check" aria-hidden="true">
+                  {{ selectedWaffle()?.slug === waffle.slug ? 'Selected' : 'Choose' }}
+                </span>
+              </button>
+            }
+          } @else {
+            @for (drink of drinks; track drink.slug) {
+              <button
+                class="combo-option"
+                type="button"
+                [attr.aria-pressed]="selectedDrink()?.slug === drink.slug"
+                (click)="selectDrink(drink)"
+              >
+                <img [src]="'/pics/drinks/' + drink.image" [alt]="drink.name" />
+                <span>{{ drink.name }}</span>
+                <span class="option-check" aria-hidden="true">
+                  {{ selectedDrink()?.slug === drink.slug ? 'Selected' : 'Choose' }}
+                </span>
+              </button>
+            }
+          }
+        </div>
+      </section>
+    </div>
+  }
+</main>
